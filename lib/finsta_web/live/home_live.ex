@@ -29,6 +29,18 @@ defmodule FinstaWeb.HomeLive do
         </.button>
       </.simple_form>
     </.modal>
+
+    <div id="feed" phx-update="stream" class="felx felx-col gap-2">
+      <div
+        :for={{dom_id, post} <- @streams.posts}
+        id={dom_id}
+        class="w-1/2 mx-auto flex flex-col gap-2 p-4 my-5 border rounded"
+      >
+        <img src={post.image_path} />
+        <p><%= post.user.email %></p>
+        <p><%= post.caption %></p>
+      </div>
+    </div>
     """
   end
 
@@ -44,6 +56,7 @@ defmodule FinstaWeb.HomeLive do
         socket
         |> allow_upload(:image, accept: ~w(.png .jpg .jpeg), max_entries: 1)
         |> assign(form: form, loading: false)
+        |> stream(:posts, Posts.list_posts())
 
       {:ok, socket}
     else
